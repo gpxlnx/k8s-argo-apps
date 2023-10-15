@@ -49,3 +49,31 @@ resource "helm_release" "argocd" {
     kind_cluster.default
   ]
 }
+
+## Ref: https://bit.ly/3L1oCq2
+## Deixamos o secret disponivel dentro desse modulo com este bloco
+data "external" "env" {
+  program = ["${path.module}/env.sh"]
+}
+
+resource "kubernetes_secret" "create_git_private_repo_secret" {
+  type = "Opaque"
+  metadata {
+    name      = "argocd-git-secret"
+    namespace = helm_release.argocd.namespace
+    labels = {
+      "argocd.argoproj.io/secret-type" = "repository"
+    }
+  }
+
+  data = {
+    "url"      = "https://github.com/gpxlnx/k8s-argo-apps.git"
+    "username" = "not-used"
+    "password" = data.external.env.result["gh_token"]
+  }
+
+  depends_on = [
+    kind_cluster.default
+  ]
+}
+
