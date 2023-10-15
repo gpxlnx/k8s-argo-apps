@@ -77,3 +77,24 @@ resource "kubernetes_secret" "create_git_private_repo_secret" {
   ]
 }
 
+## admin@123
+resource "null_resource" "update_argocd_password" {
+  triggers = {
+    key = uuid()
+  }
+
+  provisioner "local-exec" {
+    command = <<EOF
+      printf "\Updating argocd password...\n"
+      kubectl -n ${helm_release.argocd.namespace} patch secret argocd-secret \
+        -p '{"stringData": {
+          "admin.password": "$2a$12$WkH.eHw1XdRD7G6WDgwuBeAzneW4VQqjFsEmgH0BcS.hKLaJ1gSF6",
+          "admin.passwordMtime": "'$(date +%FT%T%Z)'"
+        }}'
+    EOF
+  }
+
+  depends_on = [
+    kubernetes_secret.create_git_private_repo_secret
+  ]
+}
