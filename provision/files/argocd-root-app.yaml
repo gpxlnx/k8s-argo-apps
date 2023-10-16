@@ -13,8 +13,6 @@ spec:
       releaseName: cluster-root-app
       valueFiles:
         - values.yaml
-		# Alterar nome do repositório
-		# Quando o argo detectar essa aplicação, ele procura dentro do repositorio na pasta apps/cluster
     repoURL: "https://github.com/gpxlnx/k8s-argo-apps.git"
     path: ./apps/cluster
     targetRevision: main
