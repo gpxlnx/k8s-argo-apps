@@ -98,3 +98,17 @@ resource "null_resource" "update_argocd_password" {
     kubernetes_secret.create_git_private_repo_secret
   ]
 }
+
+resource "null_resource" "create_root_argoapp" {
+  triggers = {
+    key = uuid()
+  }
+
+  provisioner "local-exec" {
+    command = <<EOF
+      printf "\nCreating root argoapp...\n"
+      kubectl --namespace ${helm_release.argocd.namespace} \
+        apply -f ./files/argocd-root-app.yaml
+    EOF
+  }
+}
