@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cluster-root-app
+  namespace: argocd
+spec:
+  destination:
+    namespace: argocd
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    helm:
+      releaseName: cluster-root-app
+      valueFiles:
+        - values.yaml
+		# Alterar nome do repositório
+		# Quando o argo detectar essa aplicação, ele procura dentro do repositorio na pasta apps/cluster
+    repoURL: "https://github.com/gpxlnx/k8s-argo-apps.git"
+    path: ./apps/cluster
+    targetRevision: main
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: -1
+      backoff:
+        duration: 15s
+        factor: 1
