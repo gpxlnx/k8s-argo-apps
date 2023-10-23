@@ -11,12 +11,3 @@ application:
     logging:
       format: json
       level: warn
-  server:
-    extraArgs:
-      - --insecure
-    ingress:
-      enabled: true
-      ingressClassName: "nginx"
-      hosts:
-        - argocd.gpxlnx.com
-      level: warn
